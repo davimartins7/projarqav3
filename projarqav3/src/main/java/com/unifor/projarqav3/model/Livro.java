@@ -16,6 +16,11 @@ public class Livro {
     private Integer ano;
     private String genero;
 
+    // --- CORREÇÃO AQUI ---
+    @Column(name = "quantidade_total")
     private Integer quantidadeTotal;
+
+    @Column(name = "quantidade_disponivel")
     private Integer quantidadeDisponivel;
+    // ---------------------
 }
