@@ -1,3 +1,6 @@
+// A porta correta para o servidor Spring Boot é 8080, conforme configurado no application.properties
+const API_BASE_URL = "http://localhost:8080/livros";
+
 function cadastrar() {
     const titulo = document.getElementById("titulo").value.trim();
     const autor = document.getElementById("autor").value.trim();
@@ -6,14 +9,12 @@ function cadastrar() {
     const quantidadeTotal = document.getElementById("quantidadeTotal").value.trim();
     const quantidadeDisponivel = document.getElementById("quantidadeDisponivel").value.trim();
 
-    // --- VALIDAÇÃO ---
     if (!titulo || !autor || !ano || !genero || !quantidadeTotal || !quantidadeDisponivel) {
         document.getElementById("msg").innerHTML = "Preencha todos os campos!";
         document.getElementById("msg").style.color = "red";
-        return; // impede o cadastro
+        return;
     }
 
-    // --- MANTÉM SEU CÓDIGO ORIGINAL ABAIXO ---
     const livro = {
         titulo,
         autor,
@@ -23,24 +24,32 @@ function cadastrar() {
         quantidadeDisponivel: parseInt(quantidadeDisponivel)
     };
 
-    fetch("http://localhost:8081/livros", {
+    // CORREÇÃO: Porta alterada de 8081 para 8080
+    fetch(API_BASE_URL, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify(livro)
     })
-    .then(res => res.json())
+    .then(res => {
+        if (res.ok) return res.json();
+        // Lidar com erros de servidor (ex: 500)
+        throw new Error('Erro ao cadastrar livro no servidor: ' + res.status);
+    })
     .then(data => {
         document.getElementById("msg").innerHTML = "Livro cadastrado com sucesso!";
         document.getElementById("msg").style.color = "green";
+        listar();
     })
     .catch(err => {
         document.getElementById("msg").innerHTML = "Erro ao cadastrar livro!";
         document.getElementById("msg").style.color = "red";
-        console.error(err);
+        console.error("Erro na função cadastrar:", err);
     });
 }
+
 function listar() {
-    fetch("http://localhost:8081/livros")
+    // CORREÇÃO: Porta alterada de 8081 para 8080
+    fetch(API_BASE_URL)
         .then(res => res.json())
         .then(livros => {
             const lista = document.getElementById("listaLivros");
@@ -53,7 +62,6 @@ function listar() {
                             <strong>ID:</strong> ${livro.id} |
                             Título: ${livro.titulo} - Autor: ${livro.autor} - Ano: (${livro.ano}) - Gênero: ${livro.genero} - Disponível: ${livro.quantidadeDisponivel}/${livro.quantidadeTotal}
                         </div>
-
                         <div>
                             <button class="btnAtualizar" onclick="atualizar(${livro.id})">Atualizar</button>
                             <button class="btnDeletar" onclick="deleteLivro(${livro.id})">Deletar</button>
@@ -61,11 +69,16 @@ function listar() {
                     </div>
                 `;
             });
+        })
+        .catch(err => {
+            console.error("Erro ao listar livros:", err);
+            document.getElementById("listaLivros").innerHTML = "Erro ao carregar lista de livros.";
         });
 }
 
 function atualizar(id) {
-    fetch("http://localhost:8081/livros/" + id)
+    // CORREÇÃO: Porta alterada de 8081 para 8080
+    fetch(`${API_BASE_URL}/${id}`)
         .then(res => res.json())
         .then(livro => {
 
@@ -75,44 +88,61 @@ function atualizar(id) {
             const novoAutor = prompt("Novo autor:", livro.autor);
             if (novoAutor === null) return;
 
-            const novoAno = prompt("Novo ano:", livro.ano);
-            if (novoAno === null) return;
+            // Certifique-se de que os valores são válidos antes de converter
+            const novoAnoStr = prompt("Novo ano:", livro.ano);
+            const novoAno = novoAnoStr !== null ? parseInt(novoAnoStr) : null;
+            if (novoAno === null || isNaN(novoAno)) return;
 
             const novoGenero = prompt("Novo gênero:", livro.genero);
             if (novoGenero === null) return;
 
-            const novaQtdTotal = prompt("Quantidade total:", livro.quantidadeTotal);
-            if (novaQtdTotal === null) return;
+            const novaQtdTotalStr = prompt("Quantidade total:", livro.quantidadeTotal);
+            const novaQtdTotal = novaQtdTotalStr !== null ? parseInt(novaQtdTotalStr) : null;
+            if (novaQtdTotal === null || isNaN(novaQtdTotal)) return;
 
-            const novaQtdDisp = prompt("Quantidade disponível:", livro.quantidadeDisponivel);
-            if (novaQtdDisp === null) return;
+            const novaQtdDispStr = prompt("Quantidade disponível:", livro.quantidadeDisponivel);
+            const novaQtdDisp = novaQtdDispStr !== null ? parseInt(novaQtdDispStr) : null;
+            if (novaQtdDisp === null || isNaN(novaQtdDisp)) return;
 
             const livroAtualizado = {
                 titulo: novoTitulo,
                 autor: novoAutor,
-                ano: parseInt(novoAno),
+                ano: novoAno,
                 genero: novoGenero,
-                quantidadeTotal: parseInt(novaQtdTotal),
-                quantidadeDisponivel: parseInt(novaQtdDisp)
+                quantidadeTotal: novaQtdTotal,
+                quantidadeDisponivel: novaQtdDisp
             };
 
-            fetch("http://localhost:8081/livros/" + id, {
+            // CORREÇÃO: Porta alterada de 8081 para 8080
+            fetch(`${API_BASE_URL}/${id}`, {
                 method: "PUT",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify(livroAtualizado)
             })
-            .then(res => res.json())
+            .then(res => {
+                if (res.ok) return res.json();
+                throw new Error('Erro ao atualizar no servidor: ' + res.status);
+            })
             .then(data => {
                 alert("Livro atualizado com sucesso!");
                 listar();
+            })
+            .catch(err => {
+                 alert("Erro ao atualizar livro. Verifique o console.");
+                 console.error("Erro na função atualizar (PUT):", err);
             });
+        })
+        .catch(err => {
+            alert("Erro ao buscar livro para edição. Verifique o console.");
+            console.error("Erro na função atualizar (GET):", err);
         });
 }
 
 function deleteLivro(id) {
     if (!confirm("Tem certeza que deseja deletar este livro?")) return;
 
-    fetch("http://localhost:8081/livros/" + id, {
+    // CORREÇÃO: Porta alterada de 8081 para 8080
+    fetch(`${API_BASE_URL}/${id}`, {
         method: "DELETE"
     })
     .then(res => {
@@ -120,11 +150,12 @@ function deleteLivro(id) {
             alert("Livro deletado!");
             listar();
         } else {
-            alert("Erro ao deletar livro.");
+            // Se a exclusão falhar no servidor
+            alert("Erro ao deletar livro. Status: " + res.status);
         }
     })
     .catch(err => {
         alert("Erro ao conectar ao servidor.");
-        console.error(err);
+        console.error("Erro na função deleteLivro:", err);
     });
 }
