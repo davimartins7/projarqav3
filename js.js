@@ -1,5 +1,6 @@
 // A porta correta para o servidor Spring Boot é 8080, conforme configurado no application.properties
-const API_BASE_URL = "http://localhost:8080/livros";
+const API_BASE_URL = "https://projarqav3-production.up.railway.app/livros";
+
 
 function cadastrar() {
     const titulo = document.getElementById("titulo").value.trim();
