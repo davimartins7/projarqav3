@@ -30,4 +30,24 @@ public class LivroService {
     public void deletar(Long id) {
         livroRepository.deleteById(id);
     }
+
+    public Livro atualizar(Long id, Livro livroAtualizado) {
+        Livro existente = livroRepository.findById(id).orElse(null);
+
+        if (existente == null) {
+            return null;
+        }
+
+        existente.setTitulo(livroAtualizado.getTitulo());
+        existente.setAutor(livroAtualizado.getAutor());
+        existente.setAno(livroAtualizado.getAno());
+        existente.setGenero(livroAtualizado.getGenero());
+        existente.setQuantidadeTotal(livroAtualizado.getQuantidadeTotal());
+        existente.setQuantidadeDisponivel(livroAtualizado.getQuantidadeDisponivel());
+
+        return livroRepository.save(existente);
+    }
+
+
+
 }
