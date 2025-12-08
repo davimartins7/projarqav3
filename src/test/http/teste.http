@@ -1,0 +1,11 @@
+POST http://localhost:8080/livros
+Content-Type: application/json
+
+{
+  "titulo": "Dom Casmurro",
+  "autor": "Machado de Assis",
+  "ano": 1899,
+  "genero": "Romance",
+  "quantidadeTotal": 5,
+  "quantidadeDisponivel": 5
+}
