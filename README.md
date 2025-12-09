@@ -9,8 +9,8 @@
 
 ✨ Descrição
 
-O Projeto ARQ V3 é um sistema web completo para gerenciamento de livros, permitindo cadastrar, listar, atualizar e deletar livros.
-Desenvolvido como projeto acadêmico, o backend é em Spring Boot e o frontend em HTML, CSS e JavaScript.
+O Projeto ARQ V3 é um microserviço web completo para gerenciamento de livros, permitindo cadastrar, listar, atualizar e deletar livros.
+Desenvolvido como projeto acadêmico, o backend é em Spring Boot, Java, Maven e o frontend em HTML, CSS e JavaScript.
 
 O backend está hospedado no Railway e o frontend no Vercel, garantindo acesso remoto seguro ao banco de dados.
 
