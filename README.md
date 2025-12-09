@@ -34,3 +34,16 @@ Backend	Java, Spring Boot, Maven
 Frontend	HTML, CSS, JavaScript
 Banco de Dados	PostgreSQL/MySQL (Railway)
 Deploy	Railway (Backend), Vercel (Frontend)
+
+
+📦 API Endpoints
+Método	Endpoint	Descrição
+GET	/livros	Lista todos os livros
+POST	/livros	Cadastra um novo livro
+GET	/livros/{id}	Busca livro pelo ID
+PUT	/livros/{id}	Atualiza livro existente
+DELETE	/livros/{id}	Deleta livro existente
+
+
+
+Autor: Davi Martins 
